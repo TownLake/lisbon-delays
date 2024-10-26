@@ -5,8 +5,8 @@ import { Sun, Moon, Plane, PlaneLanding, PlaneTakeoff } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const Dashboard = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [viewType, setViewType] = useState('arrivals');
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [viewType, setViewType] = useState('departures');
   const [flightData, setFlightData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
