@@ -1,54 +1,52 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sun, Moon, Plane, PlaneLanding, PlaneTakeoff } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
-// Sample data - in a real app this would come from an API
-const sampleData = {
-  arrivals: {
-    flightsPerDay: 245,
-    daysTracked: 30,
-    flightsOnTime: 198,
-    averageDelay: 12,
-    delays: {
-      onTime: 80.8,
-      minor: 12.2,
-      medium: 5.1,
-      major: 1.9
-    },
-    weeklyData: [
-      { week: 'Week 1', onTime: 82, minor: 11, medium: 5, major: 2 },
-      { week: 'Week 2', onTime: 79, minor: 13, medium: 6, major: 2 },
-      { week: 'Week 3', onTime: 81, minor: 12, medium: 4, major: 3 },
-      { week: 'Week 4', onTime: 81, minor: 13, medium: 5, major: 1 }
-    ]
-  },
-  departures: {
-    flightsPerDay: 242,
-    daysTracked: 30,
-    flightsOnTime: 205,
-    averageDelay: 8,
-    delays: {
-      onTime: 84.7,
-      minor: 10.3,
-      medium: 3.8,
-      major: 1.2
-    },
-    weeklyData: [
-      { week: 'Week 1', onTime: 85, minor: 10, medium: 4, major: 1 },
-      { week: 'Week 2', onTime: 83, minor: 11, medium: 4, major: 2 },
-      { week: 'Week 3', onTime: 86, minor: 9, medium: 4, major: 1 },
-      { week: 'Week 4', onTime: 84, minor: 11, medium: 3, major: 2 }
-    ]
-  }
-};
 
 const Dashboard = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [viewType, setViewType] = useState('arrivals');
-  
-  const data = viewType === 'arrivals' ? sampleData.arrivals : sampleData.departures;
+  const [flightData, setFlightData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/flight-data');
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        setFlightData(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load flight data');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500" />
+      </div>
+    );
+  }
+
+  if (error || !flightData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-red-500 text-xl">{error || 'Failed to load data'}</div>
+      </div>
+    );
+  }
+
+  const data = viewType === 'arrivals' ? flightData.arrivals : flightData.departures;
 
   return (
     <div className={`min-h-screen transition-colors duration-200 ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
