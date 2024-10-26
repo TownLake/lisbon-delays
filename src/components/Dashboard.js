@@ -164,10 +164,13 @@ const Dashboard = () => {
         </div>
 
         {/* Chart */}
-        <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
-          <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+        <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm mb-8`}>
+          <h2 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
             📊 Weekly Delay Trends
           </h2>
+          <p className={`text-sm mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            Week numbers in 2024
+          </p>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data.weeklyData}>
@@ -196,6 +199,22 @@ const Dashboard = () => {
             </ResponsiveContainer>
           </div>
         </div>
+
+        {/* Footer */}
+        <footer className={`text-center py-4 border-t ${isDarkMode ? 'border-gray-800 text-gray-400' : 'border-gray-200 text-gray-600'}`}>
+          <p className="text-sm">
+            Built by{' '}
+            <a 
+              href="https://blog.samrhea.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`hover:underline ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
+            >
+              Sam Rhea
+            </a>
+            {' '}with love from Lisbon
+          </p>
+        </footer>
       </div>
     </div>
   );
