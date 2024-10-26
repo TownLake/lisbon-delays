@@ -117,7 +117,7 @@ const Dashboard = () => {
               <div>
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>✅ Flights On Time</p>
                 <p className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                  {data.flightsOnTime}
+                  {data.flightsOnTime}%
                 </p>
               </div>
               <div>
