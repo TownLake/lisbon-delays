@@ -142,13 +142,13 @@ const Dashboard = () => {
                 </p>
               </div>
               <div>
-                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>⚠️ 5-30 Minutes</p>
+                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>🟡 5-30 Minutes</p>
                 <p className="text-2xl font-bold text-yellow-500">
                   {data.delays.minor}%
                 </p>
               </div>
               <div>
-                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>🟧 31-60 Minutes</p>
+                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>🟠 31-60 Minutes</p>
                 <p className="text-2xl font-bold text-orange-500">
                   {data.delays.medium}%
                 </p>
