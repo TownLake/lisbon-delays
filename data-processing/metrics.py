@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from datetime import datetime
 import json
 
@@ -20,16 +21,21 @@ def analyze_flight_data(arrivals_df, departures_df):
         if total_valid == 0:
             return {"onTime": 0, "minor": 0, "medium": 0, "major": 0}
         
+        # Calculate raw percentages
         on_time = (valid_flights['delay'] < 5).sum() / total_valid * 100
         minor_delay = ((valid_flights['delay'] >= 5) & (valid_flights['delay'] <= 30)).sum() / total_valid * 100
         medium_delay = ((valid_flights['delay'] > 30) & (valid_flights['delay'] <= 60)).sum() / total_valid * 100
         major_delay = (valid_flights['delay'] > 60).sum() / total_valid * 100
         
+        # Use numpy.round_ to ensure sum equals 100
+        percentages = np.array([on_time, minor_delay, medium_delay, major_delay])
+        rounded = np.round_(percentages, decimals=0)
+        
         return {
-            "onTime": round(on_time, 0),
-            "minor": round(minor_delay, 0),
-            "medium": round(medium_delay, 0),
-            "major": round(major_delay, 0)
+            "onTime": rounded[0],
+            "minor": rounded[1],
+            "medium": rounded[2],
+            "major": rounded[3]
         }
 
     def analyze_by_time_of_day(df, scheduled_col, actual_col):
@@ -78,7 +84,7 @@ def analyze_flight_data(arrivals_df, departures_df):
         "arrivals": analyze_direction(arrivals_df, 'scheduled_in', 'actual_in'),
         "departures": analyze_direction(departures_df, 'scheduled_off', 'actual_off'),
         "metadata": {
-            "airport": "LIS",  # Could be made configurable
+            "airport": "LIS",
             "timeZone": "Europe/Lisbon",
             "updateFrequency": "daily"
         }
