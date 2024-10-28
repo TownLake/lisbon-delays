@@ -230,9 +230,9 @@ const Dashboard = () => {
                 />
                 <Legend />
                 <Bar dataKey="onTime" stackId="a" fill="#10B981" name="On Time" />
-                <Bar dataKey="minor" stackId="a" fill="#F59E0B" name="5-30 Min" />
-                <Bar dataKey="medium" stackId="a" fill="#F97316" name="31-60 Min" />
-                <Bar dataKey="major" stackId="a" fill="#EF4444" name="60+ Min" />
+                <Bar dataKey="minor" stackId="a" fill="#F59E0B" name="5-30m" />
+                <Bar dataKey="medium" stackId="a" fill="#F97316" name="31-60m" />
+                <Bar dataKey="major" stackId="a" fill="#EF4444" name=">60m" />
               </BarChart>
             </ResponsiveContainer>
           </div>

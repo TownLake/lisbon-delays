@@ -4,10 +4,10 @@ import React from 'react';
 
 const DelayHeatMap = ({ data, isDarkMode }) => {
   const timeSlots = ['Early', 'Morning', 'Afternoon', 'Evening'];
-  const zones = ['Schengen Zone', 'Non-Schengen'];
+  const zones = ['Schengen', 'External'];
   
   const getColor = (value) => {
-    if (value <= 15) return '#10B981';
+    if (value <= 5) return '#10B981';
     if (value <= 30) return '#F59E0B';
     if (value <= 60) return '#F97316';
     return '#EF4444';
@@ -139,7 +139,7 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
         🌡️ Delay Heat Map
       </h2>
       <p className={`text-sm mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-        Average delays by time of day and flight zone
+        Average delays by time of day and flight region
       </p>
       
       <LandscapeHeatMap />
@@ -149,7 +149,7 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
       <div className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2">
         <div className="flex items-center">
           <div className="w-4 h-4 rounded bg-green-500 mr-2" />
-          <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{'<15m'}</span>
+          <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>On Time</span>
         </div>
         <div className="flex items-center">
           <div className="w-4 h-4 rounded bg-yellow-500 mr-2" />
