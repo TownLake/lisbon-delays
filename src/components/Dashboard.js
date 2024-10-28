@@ -66,6 +66,18 @@ const Dashboard = () => {
     };
   });
 
+  // Transform the Schengen data into the format needed for the chart
+  const schengenData = [
+    {
+      zone: "Schengen Zone",
+      ...data.schengen.schengen
+    },
+    {
+      zone: "Non-Schengen",
+      ...data.schengen.nonSchengen
+    }
+  ];
+
   return (
     <div className={`min-h-screen transition-colors duration-200 ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -204,6 +216,50 @@ const Dashboard = () => {
                 <YAxis 
                   type="category" 
                   dataKey="timeSlot" 
+                  stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
+                    border: 'none',
+                    borderRadius: '0.5rem',
+                    color: isDarkMode ? '#FFFFFF' : '#000000'
+                  }}
+                  formatter={(value) => `${value}%`}
+                />
+                <Legend />
+                <Bar dataKey="onTime" stackId="a" fill="#10B981" name="On Time" />
+                <Bar dataKey="minor" stackId="a" fill="#F59E0B" name="5-30 Min" />
+                <Bar dataKey="medium" stackId="a" fill="#F97316" name="31-60 Min" />
+                <Bar dataKey="major" stackId="a" fill="#EF4444" name="60+ Min" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Schengen vs Non-Schengen Analysis */}
+        <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm mb-8`}>
+          <h2 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            🌍 Schengen vs Non-Schengen
+          </h2>
+          <p className={`text-sm mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            How do delays compare between Schengen and non-Schengen flights?
+          </p>
+          <div className="h-48">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={schengenData}
+                layout="vertical"
+                margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
+              >
+                <XAxis 
+                  type="number" 
+                  stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+                  tickFormatter={(value) => `${value}%`}
+                />
+                <YAxis 
+                  type="category" 
+                  dataKey="zone" 
                   stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
                 />
                 <Tooltip 
