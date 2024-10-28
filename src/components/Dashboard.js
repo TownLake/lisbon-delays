@@ -48,37 +48,23 @@ const Dashboard = () => {
 
   const data = viewType === 'arrivals' ? flightData.arrivals : flightData.departures;
 
-  // Time of day data
-  const timeOfDayData = [
-    {
-      timeSlot: "Early (00:00-06:00)",
-      onTime: data.timeOfDay?.early?.onTime || 65,
-      minor: data.timeOfDay?.early?.minor || 20,
-      medium: data.timeOfDay?.early?.medium || 10,
-      major: data.timeOfDay?.early?.major || 5,
-    },
-    {
-      timeSlot: "Morning (06:00-12:00)",
-      onTime: data.timeOfDay?.morning?.onTime || 75,
-      minor: data.timeOfDay?.morning?.minor || 15,
-      medium: data.timeOfDay?.morning?.medium || 7,
-      major: data.timeOfDay?.morning?.major || 3,
-    },
-    {
-      timeSlot: "Afternoon (12:00-18:00)",
-      onTime: data.timeOfDay?.afternoon?.onTime || 70,
-      minor: data.timeOfDay?.afternoon?.minor || 18,
-      medium: data.timeOfDay?.afternoon?.medium || 8,
-      major: data.timeOfDay?.afternoon?.major || 4,
-    },
-    {
-      timeSlot: "Evening (18:00-24:00)",
-      onTime: data.timeOfDay?.evening?.onTime || 68,
-      minor: data.timeOfDay?.evening?.minor || 19,
-      medium: data.timeOfDay?.evening?.medium || 9,
-      major: data.timeOfDay?.evening?.major || 4,
-    },
-  ];
+  // Transform the timeOfDay data from the API into the format needed for the chart
+  const timeOfDayData = Object.entries(data.timeOfDay).map(([timeKey, values]) => {
+    const timeSlotLabels = {
+      early: "Early",
+      morning: "Morning",
+      afternoon: "Afternoon",
+      evening: "Evening"
+    };
+
+    return {
+      timeSlot: timeSlotLabels[timeKey],
+      onTime: values.onTime,
+      minor: values.minor,
+      medium: values.medium,
+      major: values.major,
+    };
+  });
 
   return (
     <div className={`min-h-screen transition-colors duration-200 ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
@@ -149,7 +135,7 @@ const Dashboard = () => {
               <div>
                 <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>✅ Flights On Time</p>
                 <p className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                  {data.flightsOnTime}%
+                  {data.delays.onTime}%
                 </p>
               </div>
               <div>
@@ -198,7 +184,7 @@ const Dashboard = () => {
         {/* Time of Day Analysis */}
         <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm mb-8`}>
           <h2 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-            🕒 Time of Day Analysis
+            🕒 Time of Day Trends
           </h2>
           <p className={`text-sm mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
             Delay patterns throughout the day
@@ -242,7 +228,7 @@ const Dashboard = () => {
         {/* Weekly Chart */}
         <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm mb-8`}>
           <h2 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-            📊 Weekly Delay Trends
+            📊 Weekly Trends
           </h2>
           <p className={`text-sm mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
             Week numbers in 2024
