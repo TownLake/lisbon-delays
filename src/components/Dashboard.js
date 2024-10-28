@@ -70,11 +70,11 @@ const Dashboard = () => {
   // Transform the Schengen data into the format needed for the chart
   const schengenData = [
     {
-      zone: "Schengen Zone",
+      zone: "Schengen",
       ...data.schengen.schengen
     },
     {
-      zone: "Non-Schengen",
+      zone: "External",
       ...data.schengen.nonSchengen
     }
   ];
@@ -282,8 +282,8 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <DelayHeatMap data={flightData} isDarkMode={isDarkMode} />
-
+        <DelayHeatMap data={viewType === 'arrivals' ? flightData.arrivals : flightData.departures} isDarkMode={isDarkMode} />
+    
         {/* Weekly Chart */}
         <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm mb-8`}>
           <h2 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
