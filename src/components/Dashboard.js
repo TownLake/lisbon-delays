@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { Sun, Moon, Plane, PlaneLanding, PlaneTakeoff } from 'lucide-react';
+import { Sun, Moon, PlaneLanding, PlaneTakeoff } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const Dashboard = () => {
@@ -48,13 +48,13 @@ const Dashboard = () => {
 
   const data = viewType === 'arrivals' ? flightData.arrivals : flightData.departures;
 
-  // Transform the timeOfDay data from the API into the format needed for the chart
+  // Transform the timeOfDay data with shorter labels for mobile
   const timeOfDayData = Object.entries(data.timeOfDay).map(([timeKey, values]) => {
     const timeSlotLabels = {
       early: "Early",
-      morning: "Morning",
-      afternoon: "Afternoon",
-      evening: "Evening"
+      morning: "AM",
+      afternoon: "PM",
+      evening: "Eve"
     };
 
     return {
@@ -66,17 +66,33 @@ const Dashboard = () => {
     };
   });
 
-  // Transform the Schengen data into the format needed for the chart
+  // Transform the Schengen data with shorter labels
   const schengenData = [
     {
-      zone: "Schengen Zone",
+      zone: "Schen.",
       ...data.schengen.schengen
     },
     {
-      zone: "Non-Schengen",
+      zone: "Ext.",
       ...data.schengen.nonSchengen
     }
   ];
+
+  // Common chart props for mobile optimization
+  const chartProps = {
+    margin: { top: 5, right: 20, left: 60, bottom: 5 },
+    layout: "vertical",
+  };
+
+  const tooltipStyle = {
+    contentStyle: {
+      backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
+      border: 'none',
+      borderRadius: '0.5rem',
+      color: isDarkMode ? '#FFFFFF' : '#000000'
+    },
+    formatter: (value) => `${value}%`
+  };
 
   return (
     <div className={`min-h-screen transition-colors duration-200 ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
@@ -194,88 +210,82 @@ const Dashboard = () => {
         </div>
 
         {/* Time of Day Analysis */}
-        <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm mb-8`}>
+        <div className={`p-4 sm:p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm mb-8`}>
           <h2 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
             🕒 Time of Day Trends
           </h2>
           <p className={`text-sm mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
             How does the time of day impact your delay?
           </p>
-          <div className="h-64">
+          <div className="h-48 sm:h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={timeOfDayData}
-                layout="vertical"
-                margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
+                {...chartProps}
               >
                 <XAxis 
                   type="number" 
                   stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
                   tickFormatter={(value) => `${value}%`}
+                  tickCount={5}
                 />
                 <YAxis 
                   type="category" 
                   dataKey="timeSlot" 
                   stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+                  tick={{ fontSize: '0.8rem' }}
+                  width={40}
                 />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
-                    border: 'none',
-                    borderRadius: '0.5rem',
-                    color: isDarkMode ? '#FFFFFF' : '#000000'
-                  }}
-                  formatter={(value) => `${value}%`}
+                <Tooltip {...tooltipStyle} />
+                <Legend 
+                  wrapperStyle={{ fontSize: '0.8rem' }}
+                  iconSize={8}
                 />
-                <Legend />
                 <Bar dataKey="onTime" stackId="a" fill="#10B981" name="On Time" />
-                <Bar dataKey="minor" stackId="a" fill="#F59E0B" name="5-30 Min" />
-                <Bar dataKey="medium" stackId="a" fill="#F97316" name="31-60 Min" />
-                <Bar dataKey="major" stackId="a" fill="#EF4444" name="60+ Min" />
+                <Bar dataKey="minor" stackId="a" fill="#F59E0B" name="5-30m" />
+                <Bar dataKey="medium" stackId="a" fill="#F97316" name="31-60m" />
+                <Bar dataKey="major" stackId="a" fill="#EF4444" name="60m+" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         {/* Schengen vs Non-Schengen Analysis */}
-        <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm mb-8`}>
+        <div className={`p-4 sm:p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm mb-8`}>
           <h2 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-            🌍 Schengen vs Non-Schengen
+            🌍 Schengen vs External
           </h2>
           <p className={`text-sm mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
             How do delays compare between Schengen and non-Schengen flights?
           </p>
-          <div className="h-48">
+          <div className="h-40 sm:h-48">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={schengenData}
-                layout="vertical"
-                margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
+                {...chartProps}
               >
                 <XAxis 
                   type="number" 
                   stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
                   tickFormatter={(value) => `${value}%`}
+                  tickCount={5}
                 />
                 <YAxis 
                   type="category" 
                   dataKey="zone" 
                   stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+                  tick={{ fontSize: '0.8rem' }}
+                  width={40}
                 />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
-                    border: 'none',
-                    borderRadius: '0.5rem',
-                    color: isDarkMode ? '#FFFFFF' : '#000000'
-                  }}
-                  formatter={(value) => `${value}%`}
+                <Tooltip {...tooltipStyle} />
+                <Legend 
+                  wrapperStyle={{ fontSize: '0.8rem' }}
+                  iconSize={8}
                 />
-                <Legend />
                 <Bar dataKey="onTime" stackId="a" fill="#10B981" name="On Time" />
-                <Bar dataKey="minor" stackId="a" fill="#F59E0B" name="5-30 Min" />
-                <Bar dataKey="medium" stackId="a" fill="#F97316" name="31-60 Min" />
-                <Bar dataKey="major" stackId="a" fill="#EF4444" name="60+ Min" />
+                <Bar dataKey="minor" stackId="a" fill="#F59E0B" name="5-30m" />
+                <Bar dataKey="medium" stackId="a" fill="#F97316" name="31-60m" />
+                <Bar dataKey="major" stackId="a" fill="#EF4444" name="60m+" />
               </BarChart>
             </ResponsiveContainer>
           </div>
