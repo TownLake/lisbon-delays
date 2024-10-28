@@ -187,7 +187,7 @@ const Dashboard = () => {
             🕒 Time of Day Trends
           </h2>
           <p className={`text-sm mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-            Delay patterns throughout the day
+            How does the time of day impact your delay?
           </p>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -231,7 +231,7 @@ const Dashboard = () => {
             📊 Weekly Trends
           </h2>
           <p className={`text-sm mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-            Week numbers in 2024
+            Are delays getting better or worse over time?
           </p>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
