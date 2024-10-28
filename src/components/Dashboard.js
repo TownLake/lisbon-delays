@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sun, Moon, Plane, PlaneLanding, PlaneTakeoff } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import DelayHeatMap from './DelayHeatMap';
+import DelayHeatMap from './HeatMap';
 
 const Dashboard = () => {
   const [isDarkMode, setIsDarkMode] = useState(true);
