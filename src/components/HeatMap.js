@@ -24,7 +24,7 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
   };
 
   return (
-    <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm mb-8`}>
+    <div className={`p-4 sm:p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm mb-8`}>
       <h2 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
         🌡️ Delay Heat Map
       </h2>
@@ -32,15 +32,15 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
         Average delays by time of day and flight zone
       </p>
       
-      <div className="flex justify-center">
-        <div className="inline-block">
+      <div className="w-full overflow-x-auto">
+        <div className="min-w-[640px] flex flex-col items-center">
           {/* Header row */}
-          <div className="flex">
-            <div className="w-32" /> {/* Empty corner cell */}
+          <div className="flex w-full max-w-3xl">
+            <div className="w-24 sm:w-32 shrink-0" /> {/* Empty corner cell */}
             {timeSlots.map((slot) => (
               <div 
                 key={slot}
-                className={`w-32 p-2 text-center text-sm ${
+                className={`w-20 sm:w-32 p-2 text-center text-sm shrink-0 ${
                   isDarkMode ? 'text-gray-400' : 'text-gray-600'
                 }`}
               >
@@ -51,9 +51,9 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
           
           {/* Data rows */}
           {zones.map((zone) => (
-            <div key={zone} className="flex">
+            <div key={zone} className="flex w-full max-w-3xl">
               <div 
-                className={`w-32 p-2 text-sm flex items-center ${
+                className={`w-24 sm:w-32 p-2 text-sm flex items-center shrink-0 ${
                   isDarkMode ? 'text-gray-400' : 'text-gray-600'
                 }`}
               >
@@ -64,13 +64,13 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
                 return (
                   <div
                     key={`${zone}-${slot}`}
-                    className="w-32 h-24 p-2 m-1 rounded-lg flex items-center justify-center transition-colors duration-200"
+                    className="w-20 sm:w-32 h-16 sm:h-24 p-1 sm:p-2 m-1 rounded-lg flex items-center justify-center transition-colors duration-200 shrink-0"
                     style={{
                       backgroundColor: getColor(value),
                       color: getTextColor(value)
                     }}
                   >
-                    <span className="font-bold text-lg">
+                    <span className="font-bold text-base sm:text-lg">
                       {value}m
                     </span>
                   </div>
@@ -82,7 +82,7 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
       </div>
       
       {/* Legend */}
-      <div className="mt-4 flex justify-center gap-4">
+      <div className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2">
         <div className="flex items-center">
           <div className="w-4 h-4 rounded bg-green-500 mr-2" />
           <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{'<15m'}</span>

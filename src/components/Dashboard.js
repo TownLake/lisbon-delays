@@ -207,7 +207,7 @@ const Dashboard = () => {
               <BarChart
                 data={timeOfDayData}
                 layout="vertical"
-                margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
+                margin={{ top: 5, right: 30, left: 30, bottom: 5 }}
               >
                 <XAxis 
                   type="number" 
@@ -251,7 +251,7 @@ const Dashboard = () => {
               <BarChart
                 data={schengenData}
                 layout="vertical"
-                margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
+                margin={{ top: 5, right: 30, left: 30, bottom: 5 }}
               >
                 <XAxis 
                   type="number" 
