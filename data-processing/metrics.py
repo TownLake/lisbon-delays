@@ -27,15 +27,22 @@ def analyze_flight_data(arrivals_df, departures_df):
         medium_delay = ((valid_flights['delay'] > 30) & (valid_flights['delay'] <= 60)).sum() / total_valid * 100
         major_delay = (valid_flights['delay'] > 60).sum() / total_valid * 100
         
-        # Use numpy.round_ to ensure sum equals 100
+        # Use numpy.round and ensure sum equals 100
         percentages = np.array([on_time, minor_delay, medium_delay, major_delay])
-        rounded = np.round_(percentages, decimals=0)
+        rounded = np.round(percentages)
+        
+        # Adjust to ensure sum is 100
+        diff = 100 - rounded.sum()
+        if diff != 0:
+            # Add the difference to the largest category to maintain proportions
+            max_idx = np.argmax(percentages)
+            rounded[max_idx] += diff
         
         return {
-            "onTime": rounded[0],
-            "minor": rounded[1],
-            "medium": rounded[2],
-            "major": rounded[3]
+            "onTime": int(rounded[0]),  # Convert to int to avoid numpy types
+            "minor": int(rounded[1]),
+            "medium": int(rounded[2]),
+            "major": int(rounded[3])
         }
 
     def analyze_by_time_of_day(df, scheduled_col, actual_col):
