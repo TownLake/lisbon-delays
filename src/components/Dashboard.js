@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sun, Moon, Plane, PlaneLanding, PlaneTakeoff } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import DelayHeatMap from './DelayHeatMap';
 
 const Dashboard = () => {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -282,7 +283,7 @@ const Dashboard = () => {
         </div>
 
         <DelayHeatMap data={flightData} isDarkMode={isDarkMode} />
-        
+
         {/* Weekly Chart */}
         <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm mb-8`}>
           <h2 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
