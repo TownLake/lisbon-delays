@@ -48,6 +48,38 @@ const Dashboard = () => {
 
   const data = viewType === 'arrivals' ? flightData.arrivals : flightData.departures;
 
+  // Time of day data
+  const timeOfDayData = [
+    {
+      timeSlot: "Early (00:00-06:00)",
+      onTime: data.timeOfDay?.early?.onTime || 65,
+      minor: data.timeOfDay?.early?.minor || 20,
+      medium: data.timeOfDay?.early?.medium || 10,
+      major: data.timeOfDay?.early?.major || 5,
+    },
+    {
+      timeSlot: "Morning (06:00-12:00)",
+      onTime: data.timeOfDay?.morning?.onTime || 75,
+      minor: data.timeOfDay?.morning?.minor || 15,
+      medium: data.timeOfDay?.morning?.medium || 7,
+      major: data.timeOfDay?.morning?.major || 3,
+    },
+    {
+      timeSlot: "Afternoon (12:00-18:00)",
+      onTime: data.timeOfDay?.afternoon?.onTime || 70,
+      minor: data.timeOfDay?.afternoon?.minor || 18,
+      medium: data.timeOfDay?.afternoon?.medium || 8,
+      major: data.timeOfDay?.afternoon?.major || 4,
+    },
+    {
+      timeSlot: "Evening (18:00-24:00)",
+      onTime: data.timeOfDay?.evening?.onTime || 68,
+      minor: data.timeOfDay?.evening?.minor || 19,
+      medium: data.timeOfDay?.evening?.medium || 9,
+      major: data.timeOfDay?.evening?.major || 4,
+    },
+  ];
+
   return (
     <div className={`min-h-screen transition-colors duration-200 ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -163,7 +195,51 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Chart */}
+        {/* Time of Day Analysis */}
+        <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm mb-8`}>
+          <h2 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            🕒 Time of Day Analysis
+          </h2>
+          <p className={`text-sm mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            Delay patterns throughout the day
+          </p>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={timeOfDayData}
+                layout="vertical"
+                margin={{ top: 5, right: 30, left: 120, bottom: 5 }}
+              >
+                <XAxis 
+                  type="number" 
+                  stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+                  tickFormatter={(value) => `${value}%`}
+                />
+                <YAxis 
+                  type="category" 
+                  dataKey="timeSlot" 
+                  stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
+                    border: 'none',
+                    borderRadius: '0.5rem',
+                    color: isDarkMode ? '#FFFFFF' : '#000000'
+                  }}
+                  formatter={(value) => `${value}%`}
+                />
+                <Legend />
+                <Bar dataKey="onTime" stackId="a" fill="#10B981" name="On Time" />
+                <Bar dataKey="minor" stackId="a" fill="#F59E0B" name="5-30 Min" />
+                <Bar dataKey="medium" stackId="a" fill="#F97316" name="31-60 Min" />
+                <Bar dataKey="major" stackId="a" fill="#EF4444" name="60+ Min" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Weekly Chart */}
         <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm mb-8`}>
           <h2 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
             📊 Weekly Delay Trends
