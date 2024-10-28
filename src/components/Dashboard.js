@@ -281,6 +281,8 @@ const Dashboard = () => {
           </div>
         </div>
 
+        <DelayHeatMap data={flightData} isDarkMode={isDarkMode} />
+        
         {/* Weekly Chart */}
         <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm mb-8`}>
           <h2 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
