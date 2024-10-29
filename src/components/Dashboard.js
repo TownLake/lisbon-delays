@@ -1,10 +1,24 @@
 'use client'
 
-// Import all required dependencies
 import React, { useState, useEffect, Suspense } from 'react';
-import { Sun, Moon, PlaneLanding, PlaneTakeoff, Loader2 } from 'lucide-react';
+import { Sun, Moon, PlaneLanding, PlaneTakeoff, Loader2, HelpCircle } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  Tooltip as UITooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import DelayHeatMap from './HeatMap';
+
+// Tooltips content configuration
+const tooltipContent = {
+  flightsPerDay: "Average number of flights per day based on our collected data",
+  daysTracked: "Total number of days we've been collecting flight data",
+  flightsOnTime: "Percentage of flights that departed or arrived within 15 minutes of scheduled time",
+  averageDelay: "Average delay time across all tracked flights",
+  delayBreakdown: "Distribution of delays across different time ranges"
+};
 
 // Loading component
 const LoadingSpinner = () => (
@@ -14,9 +28,23 @@ const LoadingSpinner = () => (
 );
 LoadingSpinner.displayName = 'LoadingSpinner';
 
-// Stats card component
-const StatCard = React.memo(({ label, value, icon, isDarkMode }) => (
-  <div>
+// Stats card component with tooltip
+const StatCard = React.memo(({ label, value, icon, isDarkMode, tooltipText }) => (
+  <div className="relative">
+    <div className="absolute top-0 right-0">
+      <TooltipProvider>
+        <UITooltip>
+          <TooltipTrigger asChild>
+            <button className={`p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+              <HelpCircle className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="text-sm">{tooltipText}</p>
+          </TooltipContent>
+        </UITooltip>
+      </TooltipProvider>
+    </div>
     <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
       {icon} {label}
     </p>
@@ -47,7 +75,21 @@ CustomLegend.displayName = 'CustomLegend';
 
 // Delay breakdown component
 const DelayBreakdown = React.memo(({ delays, isDarkMode }) => (
-  <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
+  <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm relative`}>
+    <div className="absolute top-6 right-6">
+      <TooltipProvider>
+        <UITooltip>
+          <TooltipTrigger asChild>
+            <button className={`p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+              <HelpCircle className="h-4 w-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="text-sm">{tooltipContent.delayBreakdown}</p>
+          </TooltipContent>
+        </UITooltip>
+      </TooltipProvider>
+    </div>
     <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
       ⏱️ Delay Breakdown
     </h2>
@@ -246,40 +288,44 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Summary Stats */}
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
-            {/* Flight Stats */}
-            <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
-              <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                🛫 Flight Statistics
-              </h2>
-              <div className="grid grid-cols-2 gap-4">
-                <StatCard
-                  label="Flights per Day"
-                  value={data.flightsPerDay}
-                  icon="✈️"
-                  isDarkMode={isDarkMode}
-                />
-                <StatCard
-                  label="Days Tracked"
-                  value={data.daysTracked}
-                  icon="📅"
-                  isDarkMode={isDarkMode}
-                />
-                <StatCard
-                  label="Flights On Time"
-                  value={`${data.delays.onTime}%`}
-                  icon="✅"
-                  isDarkMode={isDarkMode}
-                />
-                <StatCard
-                  label="Average Delay"
-                  value={`${data.averageDelay}m`}
-                  icon="⏱️"
-                  isDarkMode={isDarkMode}
-                />
-              </div>
+        {/* Summary Stats with updated StatCard components */}
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          {/* Flight Stats */}
+          <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
+            <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              🛫 Flight Statistics
+            </h2>
+            <div className="grid grid-cols-2 gap-4">
+              <StatCard
+                label="Flights per Day"
+                value={data.flightsPerDay}
+                icon="✈️"
+                isDarkMode={isDarkMode}
+                tooltipText={tooltipContent.flightsPerDay}
+              />
+              <StatCard
+                label="Days Tracked"
+                value={data.daysTracked}
+                icon="📅"
+                isDarkMode={isDarkMode}
+                tooltipText={tooltipContent.daysTracked}
+              />
+              <StatCard
+                label="Flights On Time"
+                value={`${data.delays.onTime}%`}
+                icon="✅"
+                isDarkMode={isDarkMode}
+                tooltipText={tooltipContent.flightsOnTime}
+              />
+              <StatCard
+                label="Average Delay"
+                value={`${data.averageDelay}m`}
+                icon="⏱️"
+                isDarkMode={isDarkMode}
+                tooltipText={tooltipContent.averageDelay}
+              />
             </div>
+          </div>
 
             {/* Delay Stats */}
             <DelayBreakdown delays={data.delays} isDarkMode={isDarkMode} />
