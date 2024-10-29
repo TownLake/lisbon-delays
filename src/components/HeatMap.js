@@ -6,11 +6,12 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
   const timeSlots = ['Early', 'Morning', 'Afternoon', 'Evening'];
   const zones = ['Schengen', 'External'];
   
+  // Use the same colors as the dashboard charts
   const getColor = (value) => {
-    if (value <= 5) return '#10B981';
-    if (value <= 30) return '#F59E0B';
-    if (value <= 60) return '#F97316';
-    return '#EF4444';
+    if (value <= 5) return '#10B981';  // green-500
+    if (value <= 30) return '#F59E0B'; // yellow-500
+    if (value <= 60) return '#F97316'; // orange-500
+    return '#EF4444';                  // red-500
   };
 
   const getTextColor = (value) => {
@@ -18,9 +19,9 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
   };
 
   const getCellValue = (zone, timeSlot) => {
-    const zoneKey = zone === 'Schengen Zone' ? 'schengen' : 'nonSchengen';
+    const zoneKey = zone === 'Schengen' ? 'schengen' : 'nonSchengen';
     const timeKey = timeSlot.toLowerCase();
-    return data.heatmap?.[zoneKey]?.[timeKey] ?? 0;
+    return data?.heatmap?.[zoneKey]?.[timeKey] ?? 0;
   };
 
   // Desktop/Landscape Layout
@@ -36,6 +37,7 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
               className={`w-32 p-2 text-center text-sm shrink-0 ${
                 isDarkMode ? 'text-gray-400' : 'text-gray-600'
               }`}
+              style={{ fontSize: '12px' }} // Match dashboard chart text size
             >
               {slot}
             </div>
@@ -49,6 +51,7 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
               className={`w-32 p-2 text-sm flex items-center shrink-0 ${
                 isDarkMode ? 'text-gray-400' : 'text-gray-600'
               }`}
+              style={{ fontSize: '12px' }} // Match dashboard chart text size
             >
               {zone}
             </div>
@@ -83,7 +86,10 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
           {/* Time slots column */}
           <div className="flex flex-col">
             <div className="h-20 p-2 flex items-center justify-end">
-              <div className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              <div 
+                className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+                style={{ fontSize: '12px' }} // Match dashboard chart text size
+              >
                 Time of Day
               </div>
             </div>
@@ -93,6 +99,7 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
                 className={`h-20 p-2 flex items-center justify-end text-sm ${
                   isDarkMode ? 'text-gray-400' : 'text-gray-600'
                 }`}
+                style={{ fontSize: '12px' }} // Match dashboard chart text size
               >
                 {slot}
               </div>
@@ -106,6 +113,7 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
                 className={`h-20 p-2 flex items-center justify-center text-sm ${
                   isDarkMode ? 'text-gray-400' : 'text-gray-600'
                 }`}
+                style={{ fontSize: '12px' }} // Match dashboard chart text size
               >
                 {zone}
               </div>
@@ -133,6 +141,48 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
     </div>
   );
 
+  // Legend component matching dashboard style
+  const Legend = () => (
+    <div className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2">
+      <div className="flex items-center">
+        <div className="w-4 h-4 rounded bg-green-500 mr-2" />
+        <span 
+          className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+          style={{ fontSize: '12px' }} // Match dashboard chart text size
+        >
+          On Time
+        </span>
+      </div>
+      <div className="flex items-center">
+        <div className="w-4 h-4 rounded bg-yellow-500 mr-2" />
+        <span 
+          className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+          style={{ fontSize: '12px' }}
+        >
+          15-30m
+        </span>
+      </div>
+      <div className="flex items-center">
+        <div className="w-4 h-4 rounded bg-orange-500 mr-2" />
+        <span 
+          className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+          style={{ fontSize: '12px' }}
+        >
+          31-60m
+        </span>
+      </div>
+      <div className="flex items-center">
+        <div className="w-4 h-4 rounded bg-red-500 mr-2" />
+        <span 
+          className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+          style={{ fontSize: '12px' }}
+        >
+          {'>60m'}
+        </span>
+      </div>
+    </div>
+  );
+
   return (
     <div className={`p-4 sm:p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm mb-8`}>
       <h2 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
@@ -144,26 +194,7 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
       
       <LandscapeHeatMap />
       <PortraitHeatMap />
-      
-      {/* Legend */}
-      <div className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2">
-        <div className="flex items-center">
-          <div className="w-4 h-4 rounded bg-green-500 mr-2" />
-          <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>On Time</span>
-        </div>
-        <div className="flex items-center">
-          <div className="w-4 h-4 rounded bg-yellow-500 mr-2" />
-          <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>15-30m</span>
-        </div>
-        <div className="flex items-center">
-          <div className="w-4 h-4 rounded bg-orange-500 mr-2" />
-          <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>31-60m</span>
-        </div>
-        <div className="flex items-center">
-          <div className="w-4 h-4 rounded bg-red-500 mr-2" />
-          <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{'>60m'}</span>
-        </div>
-      </div>
+      <Legend />
     </div>
   );
 };
