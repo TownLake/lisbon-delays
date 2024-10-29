@@ -1,8 +1,9 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { Sun, Moon, Plane, PlaneLanding, PlaneTakeoff } from 'lucide-react';
+import { Sun, Moon, PlaneLanding, PlaneTakeoff } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import DelayHeatMap from './HeatMap';
 
 const Dashboard = () => {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -10,6 +11,49 @@ const Dashboard = () => {
   const [flightData, setFlightData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Custom Legend renderer for consistent styling across charts
+  const CustomLegend = ({ payload }) => (
+    <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mt-2">
+      {payload.map((entry, index) => (
+        <div key={`legend-${index}`} className="flex items-center">
+          <div className="w-4 h-4 rounded mr-2" style={{ backgroundColor: entry.color }} />
+          <span 
+            className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
+            style={{ fontSize: '14px' }}
+          >
+            {entry.value}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+
+  // Common chart configuration
+  const chartConfig = {
+    labelStyle: {
+      fontSize: '14px',
+      fill: isDarkMode ? '#9CA3AF' : '#6B7280',
+    },
+    tooltipStyle: {
+      backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
+      border: 'none',
+      borderRadius: '0.5rem',
+      color: isDarkMode ? '#FFFFFF' : '#000000',
+    },
+    colors: {
+      onTime: '#10B981',
+      minor: '#F59E0B',
+      medium: '#F97316',
+      major: '#EF4444',
+    },
+    labels: {
+      onTime: 'On Time',
+      minor: '5-30m',
+      medium: '31-60m',
+      major: '>60m',
+    },
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,11 +113,11 @@ const Dashboard = () => {
   // Transform the Schengen data into the format needed for the chart
   const schengenData = [
     {
-      zone: "Schengen Zone",
+      zone: "Schengen",
       ...data.schengen.schengen
     },
     {
-      zone: "Non-Schengen",
+      zone: "External",
       ...data.schengen.nonSchengen
     }
   ];
@@ -166,25 +210,37 @@ const Dashboard = () => {
             </h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>✅ On Time</p>
+                <div className="flex items-center mb-1">
+                  <div className="w-4 h-4 rounded bg-green-500 mr-2" />
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>On Time</p>
+                </div>
                 <p className="text-2xl font-bold text-green-500">
                   {data.delays.onTime}%
                 </p>
               </div>
               <div>
-                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>🟡 5-30 Minutes</p>
+                <div className="flex items-center mb-1">
+                  <div className="w-4 h-4 rounded bg-yellow-500 mr-2" />
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>5-30 Minutes</p>
+                </div>
                 <p className="text-2xl font-bold text-yellow-500">
                   {data.delays.minor}%
                 </p>
               </div>
               <div>
-                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>🟠 31-60 Minutes</p>
+                <div className="flex items-center mb-1">
+                  <div className="w-4 h-4 rounded bg-orange-500 mr-2" />
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>31-60 Minutes</p>
+                </div>
                 <p className="text-2xl font-bold text-orange-500">
                   {data.delays.medium}%
                 </p>
               </div>
               <div>
-                <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>🔴 60+ Minutes</p>
+                <div className="flex items-center mb-1">
+                  <div className="w-4 h-4 rounded bg-red-500 mr-2" />
+                  <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>60+ Minutes</p>
+                </div>
                 <p className="text-2xl font-bold text-red-500">
                   {data.delays.major}%
                 </p>
@@ -210,28 +266,23 @@ const Dashboard = () => {
               >
                 <XAxis 
                   type="number" 
-                  stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+                  tick={chartConfig.labelStyle}
                   tickFormatter={(value) => `${value}%`}
                 />
                 <YAxis 
                   type="category" 
                   dataKey="timeSlot" 
-                  stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+                  tick={chartConfig.labelStyle}
                 />
                 <Tooltip 
-                  contentStyle={{
-                    backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
-                    border: 'none',
-                    borderRadius: '0.5rem',
-                    color: isDarkMode ? '#FFFFFF' : '#000000'
-                  }}
+                  contentStyle={chartConfig.tooltipStyle}
                   formatter={(value) => `${value}%`}
                 />
-                <Legend />
-                <Bar dataKey="onTime" stackId="a" fill="#10B981" name="On Time" />
-                <Bar dataKey="minor" stackId="a" fill="#F59E0B" name="5-30 Min" />
-                <Bar dataKey="medium" stackId="a" fill="#F97316" name="31-60 Min" />
-                <Bar dataKey="major" stackId="a" fill="#EF4444" name="60+ Min" />
+                <Legend content={<CustomLegend />} />
+                <Bar dataKey="onTime" stackId="a" fill={chartConfig.colors.onTime} name={chartConfig.labels.onTime} />
+                <Bar dataKey="minor" stackId="a" fill={chartConfig.colors.minor} name={chartConfig.labels.minor} />
+                <Bar dataKey="medium" stackId="a" fill={chartConfig.colors.medium} name={chartConfig.labels.medium} />
+                <Bar dataKey="major" stackId="a" fill={chartConfig.colors.major} name={chartConfig.labels.major} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -254,33 +305,30 @@ const Dashboard = () => {
               >
                 <XAxis 
                   type="number" 
-                  stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+                  tick={chartConfig.labelStyle}
                   tickFormatter={(value) => `${value}%`}
                 />
                 <YAxis 
                   type="category" 
                   dataKey="zone" 
-                  stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+                  tick={chartConfig.labelStyle}
                 />
                 <Tooltip 
-                  contentStyle={{
-                    backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
-                    border: 'none',
-                    borderRadius: '0.5rem',
-                    color: isDarkMode ? '#FFFFFF' : '#000000'
-                  }}
+                  contentStyle={chartConfig.tooltipStyle}
                   formatter={(value) => `${value}%`}
                 />
-                <Legend />
-                <Bar dataKey="onTime" stackId="a" fill="#10B981" name="On Time" />
-                <Bar dataKey="minor" stackId="a" fill="#F59E0B" name="5-30 Min" />
-                <Bar dataKey="medium" stackId="a" fill="#F97316" name="31-60 Min" />
-                <Bar dataKey="major" stackId="a" fill="#EF4444" name="60+ Min" />
+                <Legend content={<CustomLegend />} />
+                <Bar dataKey="onTime" stackId="a" fill={chartConfig.colors.onTime} name={chartConfig.labels.onTime} />
+                <Bar dataKey="minor" stackId="a" fill={chartConfig.colors.minor} name={chartConfig.labels.minor} />
+                <Bar dataKey="medium" stackId="a" fill={chartConfig.colors.medium} name={chartConfig.labels.medium} />
+                <Bar dataKey="major" stackId="a" fill={chartConfig.colors.major} name={chartConfig.labels.major} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
+        <DelayHeatMap data={viewType === 'arrivals' ? flightData.arrivals : flightData.departures} isDarkMode={isDarkMode} />
+    
         {/* Weekly Chart */}
         <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm mb-8`}>
           <h2 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
@@ -291,28 +339,27 @@ const Dashboard = () => {
           </p>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data.weeklyData}>
+              <BarChart 
+                data={data.weeklyData}
+                margin={{ top: 5, right: 30, left: 30, bottom: 5 }}
+              >
                 <XAxis 
                   dataKey="week" 
-                  stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+                  tick={chartConfig.labelStyle}
                 />
                 <YAxis 
-                  stroke={isDarkMode ? '#9CA3AF' : '#6B7280'}
+                  tick={chartConfig.labelStyle}
                   tickFormatter={(value) => `${value}%`}
                 />
                 <Tooltip 
-                  contentStyle={{
-                    backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
-                    border: 'none',
-                    borderRadius: '0.5rem',
-                    color: isDarkMode ? '#FFFFFF' : '#000000'
-                  }}
+                  contentStyle={chartConfig.tooltipStyle}
+                  formatter={(value) => `${value}%`}
                 />
-                <Legend />
-                <Bar dataKey="onTime" stackId="a" fill="#10B981" name="On Time" />
-                <Bar dataKey="minor" stackId="a" fill="#F59E0B" name="5-30 Min" />
-                <Bar dataKey="medium" stackId="a" fill="#F97316" name="31-60 Min" />
-                <Bar dataKey="major" stackId="a" fill="#EF4444" name="60+ Min" />
+                <Legend content={<CustomLegend />} />
+                <Bar dataKey="onTime" stackId="a" fill={chartConfig.colors.onTime} name={chartConfig.labels.onTime} />
+                <Bar dataKey="minor" stackId="a" fill={chartConfig.colors.minor} name={chartConfig.labels.minor} />
+                <Bar dataKey="medium" stackId="a" fill={chartConfig.colors.medium} name={chartConfig.labels.medium} />
+                <Bar dataKey="major" stackId="a" fill={chartConfig.colors.major} name={chartConfig.labels.major} />
               </BarChart>
             </ResponsiveContainer>
           </div>

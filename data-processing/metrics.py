@@ -39,7 +39,7 @@ def analyze_flight_data(arrivals_df, departures_df):
             rounded[max_idx] += diff
         
         return {
-            "onTime": int(rounded[0]),  # Convert to int to avoid numpy types
+            "onTime": int(rounded[0]),
             "minor": int(rounded[1]),
             "medium": int(rounded[2]),
             "major": int(rounded[3])
@@ -68,6 +68,36 @@ def analyze_flight_data(arrivals_df, departures_df):
         
         return weekly_trends
 
+    def analyze_schengen(df, scheduled_col, actual_col):
+        """Calculate delay breakdown by Schengen zone status."""
+        result = {}
+        for is_schengen in [True, False]:
+            schengen_data = df[df['schengen'] == is_schengen]
+            key = "schengen" if is_schengen else "nonSchengen"
+            result[key] = calculate_delay_breakdown(schengen_data, scheduled_col, actual_col)
+        return result
+
+    def calculate_heatmap_metrics(df, scheduled_col, actual_col):
+        """Calculate average delays by time of day for Schengen and non-Schengen flights."""
+        result = {
+            "schengen": {},
+            "nonSchengen": {}
+        }
+        
+        # Filter for valid flights
+        valid_flights = df[df[scheduled_col].notna() & df[actual_col].notna()]
+        
+        for is_schengen in [True, False]:
+            key = "schengen" if is_schengen else "nonSchengen"
+            schengen_data = valid_flights[valid_flights['schengen'] == is_schengen]
+            
+            for time_period in ['Early', 'Morning', 'Afternoon', 'Evening']:
+                period_data = schengen_data[schengen_data['time_of_day'] == time_period]
+                avg_delay = round(period_data['delay'].mean()) if len(period_data) > 0 else 0
+                result[key][time_period.lower()] = avg_delay
+                
+        return result
+
     def analyze_direction(df, scheduled_col, actual_col):
         """Analyze flight data for one direction (arrivals or departures)."""
         valid_flights = df[df[scheduled_col].notna() & df[actual_col].notna()]
@@ -82,7 +112,9 @@ def analyze_flight_data(arrivals_df, departures_df):
             "averageDelay": avg_delay,
             "delays": calculate_delay_breakdown(df, scheduled_col, actual_col),
             "timeOfDay": analyze_by_time_of_day(df, scheduled_col, actual_col),
+            "heatmap": calculate_heatmap_metrics(df, scheduled_col, actual_col),
             "weeklyData": analyze_weekly_trends(df, scheduled_col, actual_col),
+            "schengen": analyze_schengen(df, scheduled_col, actual_col),
             "lastUpdated": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
         }
 
