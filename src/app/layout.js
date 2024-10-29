@@ -1,5 +1,4 @@
 import './globals.css'
-import './styles/styles.css';
 
 export const metadata = {
   title: 'LIS-b-On Time',
