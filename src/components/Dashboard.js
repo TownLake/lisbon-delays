@@ -10,6 +10,7 @@ const LoadingSpinner = () => (
     <Loader2 className="h-32 w-32 animate-spin text-blue-500" />
   </div>
 );
+LoadingSpinner.displayName = 'LoadingSpinner';
 
 const CustomLegend = React.memo(({ payload, isDarkMode }) => (
   <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mt-2">
@@ -26,6 +27,7 @@ const CustomLegend = React.memo(({ payload, isDarkMode }) => (
     ))}
   </div>
 ));
+CustomLegend.displayName = 'CustomLegend';
 
 const StatCard = React.memo(({ label, value, icon, isDarkMode }) => (
   <div>
@@ -35,6 +37,7 @@ const StatCard = React.memo(({ label, value, icon, isDarkMode }) => (
     </p>
   </div>
 ));
+StatCard.displayName = 'StatCard';
 
 const DelayBreakdown = React.memo(({ delays, isDarkMode }) => (
   <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
@@ -73,6 +76,7 @@ const DelayBreakdown = React.memo(({ delays, isDarkMode }) => (
     </div>
   </div>
 ));
+DelayBreakdown.displayName = 'DelayBreakdown';
 
 const ChartSection = React.memo(({ title, description, data, isDarkMode, config, height = "64" }) => (
   <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm mb-8`}>
@@ -87,16 +91,16 @@ const ChartSection = React.memo(({ title, description, data, isDarkMode, config,
         <BarChart
           data={data}
           margin={{ top: 5, right: 30, left: 30, bottom: 5 }}
-          layout={config.layout || "horizontal"}
+          layout={config.layout}
         >
           <XAxis 
-            type={config.xAxisType || "category"} 
+            type={config.xAxisType}
             dataKey={config.xDataKey}
             tick={config.labelStyle}
             tickFormatter={config.xTickFormatter}
           />
           <YAxis 
-            type={config.yAxisType || "number"}
+            type={config.yAxisType}
             dataKey={config.yDataKey}
             tick={config.labelStyle}
             tickFormatter={config.yTickFormatter}
@@ -120,6 +124,7 @@ const ChartSection = React.memo(({ title, description, data, isDarkMode, config,
     </div>
   </div>
 ));
+ChartSection.displayName = 'ChartSection';
 
 const Dashboard = () => {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -199,18 +204,6 @@ const Dashboard = () => {
       { zone: "Schengen", ...data.schengen.schengen },
       { zone: "External", ...data.schengen.nonSchengen }
     ];
-
-    const commonBarConfig = {
-      bars: [
-        { dataKey: "onTime", stackId: "a", fill: chartConfig.colors.onTime, name: chartConfig.labels.onTime },
-        { dataKey: "minor", stackId: "a", fill: chartConfig.colors.minor, name: chartConfig.labels.minor },
-        { dataKey: "medium", stackId: "a", fill: chartConfig.colors.medium, name: chartConfig.labels.medium },
-        { dataKey: "major", stackId: "a", fill: chartConfig.colors.major, name: chartConfig.labels.major }
-      ],
-      tooltipFormatter: (value) => `${value}%`,
-      labelStyle: chartConfig.labelStyle,
-      tooltipStyle: chartConfig.tooltipStyle
-    };
 
     return (
       <div className={`min-h-screen transition-colors duration-200 ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
@@ -304,13 +297,22 @@ const Dashboard = () => {
             data={timeOfDayData}
             isDarkMode={isDarkMode}
             config={{
-              ...commonBarConfig,
-              layout: "vertical",
               xAxisType: "number",
               yAxisType: "category",
               yDataKey: "timeSlot",
-              xTickFormatter: (value) => `${value}%`
+              xTickFormatter: (value) => `${value}%`,
+              tooltipFormatter: (value) => `${value}%`,
+              labelStyle: chartConfig.labelStyle,
+              tooltipStyle: chartConfig.tooltipStyle,
+              layout: "vertical",
+              bars: [
+                { dataKey: "onTime", stackId: "a", fill: chartConfig.colors.onTime, name: chartConfig.labels.onTime },
+                { dataKey: "minor", stackId: "a", fill: chartConfig.colors.minor, name: chartConfig.labels.minor },
+                { dataKey: "medium", stackId: "a", fill: chartConfig.colors.medium, name: chartConfig.labels.medium },
+                { dataKey: "major", stackId: "a", fill: chartConfig.colors.major, name: chartConfig.labels.major }
+              ]
             }}
+            height="64"
           />
 
           {/* Schengen Analysis */}
@@ -320,17 +322,25 @@ const Dashboard = () => {
             data={schengenData}
             isDarkMode={isDarkMode}
             config={{
-              ...commonBarConfig,
-              layout: "vertical",
               xAxisType: "number",
               yAxisType: "category",
               yDataKey: "zone",
-              xTickFormatter: (value) => `${value}%`
+              xTickFormatter: (value) => `${value}%`,
+              tooltipFormatter: (value) => `${value}%`,
+              labelStyle: chartConfig.labelStyle,
+              tooltipStyle: chartConfig.tooltipStyle,
+              layout: "vertical",
+              bars: [
+                { dataKey: "onTime", stackId: "a", fill: chartConfig.colors.onTime, name: chartConfig.labels.onTime },
+                { dataKey: "minor", stackId: "a", fill: chartConfig.colors.minor, name: chartConfig.labels.minor },
+                { dataKey: "medium", stackId: "a", fill: chartConfig.colors.medium, name: chartConfig.labels.medium },
+                { dataKey: "major", stackId: "a", fill: chartConfig.colors.major, name: chartConfig.labels.major }
+              ]
             }}
             height="48"
           />
 
-          {/* Heatmap */}
+          {/* HeatMap */}
           <DelayHeatMap data={data} isDarkMode={isDarkMode} />
 
           {/* Weekly Trends */}
@@ -340,9 +350,19 @@ const Dashboard = () => {
             data={data.weeklyData}
             isDarkMode={isDarkMode}
             config={{
-              ...commonBarConfig,
+              xAxisType: "category",
+              yAxisType: "number",
               xDataKey: "week",
-              yTickFormatter: (value) => `${value}%`
+              yTickFormatter: (value) => `${value}%`,
+              tooltipFormatter: (value) => `${value}%`,
+              labelStyle: chartConfig.labelStyle,
+              tooltipStyle: chartConfig.tooltipStyle,
+              bars: [
+                { dataKey: "onTime", stackId: "a", fill: chartConfig.colors.onTime, name: chartConfig.labels.onTime },
+                { dataKey: "minor", stackId: "a", fill: chartConfig.colors.minor, name: chartConfig.labels.minor },
+                { dataKey: "medium", stackId: "a", fill: chartConfig.colors.medium, name: chartConfig.labels.medium },
+                { dataKey: "major", stackId: "a", fill: chartConfig.colors.major, name: chartConfig.labels.major }
+              ]
             }}
             height="80"
           />
@@ -366,7 +386,6 @@ const Dashboard = () => {
       </div>
     );
   });
-
   MainContent.displayName = 'MainContent';
 
   return (
@@ -376,12 +395,6 @@ const Dashboard = () => {
   );
 };
 
-// Add display names for debugging
-CustomLegend.displayName = 'CustomLegend';
-StatCard.displayName = 'StatCard';
-DelayBreakdown.displayName = 'DelayBreakdown';
-ChartSection.displayName = 'ChartSection';
-LoadingSpinner.displayName = 'LoadingSpinner';
 Dashboard.displayName = 'Dashboard';
 
 export default Dashboard;
