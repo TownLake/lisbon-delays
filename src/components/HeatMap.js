@@ -37,7 +37,7 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
               className={`w-32 p-2 text-center text-sm shrink-0 ${
                 isDarkMode ? 'text-gray-400' : 'text-gray-600'
               }`}
-              style={{ fontSize: '14px' }} // Match dashboard chart text size
+              style={{ fontSize: '14px' }}
             >
               {slot}
             </div>
@@ -88,7 +88,7 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
             <div className="h-20 p-2 flex items-center justify-end">
               <div 
                 className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
-                style={{ fontSize: '12px' }} // Match dashboard chart text size
+                style={{ fontSize: '14px' }}
               >
                 Time of Day
               </div>
@@ -148,7 +148,7 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
         <div className="w-4 h-4 rounded bg-green-500 mr-2" />
         <span 
           className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
-          style={{ fontSize: '12px' }} // Match dashboard chart text size
+          style={{ fontSize: '14px' }} // Match dashboard chart text size
         >
           On Time
         </span>
@@ -157,7 +157,7 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
         <div className="w-4 h-4 rounded bg-yellow-500 mr-2" />
         <span 
           className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
-          style={{ fontSize: '12px' }}
+          style={{ fontSize: '14px' }}
         >
           15-30m
         </span>
@@ -166,7 +166,7 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
         <div className="w-4 h-4 rounded bg-orange-500 mr-2" />
         <span 
           className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
-          style={{ fontSize: '12px' }}
+          style={{ fontSize: '14px' }}
         >
           31-60m
         </span>
@@ -175,7 +175,7 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
         <div className="w-4 h-4 rounded bg-red-500 mr-2" />
         <span 
           className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
-          style={{ fontSize: '12px' }}
+          style={{ fontSize: '14px' }}
         >
           {'>60m'}
         </span>

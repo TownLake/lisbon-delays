@@ -32,7 +32,7 @@ const Dashboard = () => {
   // Common chart configuration
   const chartConfig = {
     labelStyle: {
-      fontSize: '12px',
+      fontSize: '14px',
       fill: isDarkMode ? '#9CA3AF' : '#6B7280',
     },
     tooltipStyle: {
