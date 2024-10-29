@@ -20,7 +20,7 @@ const Dashboard = () => {
           <div className="w-4 h-4 rounded mr-2" style={{ backgroundColor: entry.color }} />
           <span 
             className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}
-            style={{ fontSize: '12px' }}
+            style={{ fontSize: '14px' }}
           >
             {entry.value}
           </span>

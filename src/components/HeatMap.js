@@ -37,7 +37,7 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
               className={`w-32 p-2 text-center text-sm shrink-0 ${
                 isDarkMode ? 'text-gray-400' : 'text-gray-600'
               }`}
-              style={{ fontSize: '12px' }} // Match dashboard chart text size
+              style={{ fontSize: '14px' }} // Match dashboard chart text size
             >
               {slot}
             </div>
@@ -51,7 +51,7 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
               className={`w-32 p-2 text-sm flex items-center shrink-0 ${
                 isDarkMode ? 'text-gray-400' : 'text-gray-600'
               }`}
-              style={{ fontSize: '12px' }} // Match dashboard chart text size
+              style={{ fontSize: '14px' }} // Match dashboard chart text size
             >
               {zone}
             </div>
@@ -99,7 +99,7 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
                 className={`h-20 p-2 flex items-center justify-end text-sm ${
                   isDarkMode ? 'text-gray-400' : 'text-gray-600'
                 }`}
-                style={{ fontSize: '12px' }} // Match dashboard chart text size
+                style={{ fontSize: '14px' }} // Match dashboard chart text size
               >
                 {slot}
               </div>
@@ -113,7 +113,7 @@ const DelayHeatMap = ({ data, isDarkMode }) => {
                 className={`h-20 p-2 flex items-center justify-center text-sm ${
                   isDarkMode ? 'text-gray-400' : 'text-gray-600'
                 }`}
-                style={{ fontSize: '12px' }} // Match dashboard chart text size
+                style={{ fontSize: '14px' }} // Match dashboard chart text size
               >
                 {zone}
               </div>
