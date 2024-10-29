@@ -1,10 +1,12 @@
 'use client'
 
+// Import all required dependencies
 import React, { useState, useEffect, Suspense } from 'react';
 import { Sun, Moon, PlaneLanding, PlaneTakeoff, Loader2 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import DelayHeatMap from './HeatMap';
 
+// Loading component
 const LoadingSpinner = () => (
   <div className="min-h-screen flex items-center justify-center">
     <Loader2 className="h-32 w-32 animate-spin text-blue-500" />
@@ -12,6 +14,20 @@ const LoadingSpinner = () => (
 );
 LoadingSpinner.displayName = 'LoadingSpinner';
 
+// Stats card component
+const StatCard = React.memo(({ label, value, icon, isDarkMode }) => (
+  <div>
+    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+      {icon} {label}
+    </p>
+    <p className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+      {value}
+    </p>
+  </div>
+));
+StatCard.displayName = 'StatCard';
+
+// Legend component
 const CustomLegend = React.memo(({ payload, isDarkMode }) => (
   <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mt-2">
     {payload.map((entry, index) => (
@@ -29,16 +45,7 @@ const CustomLegend = React.memo(({ payload, isDarkMode }) => (
 ));
 CustomLegend.displayName = 'CustomLegend';
 
-const StatCard = React.memo(({ label, value, icon, isDarkMode }) => (
-  <div>
-    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{icon} {label}</p>
-    <p className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-      {value}
-    </p>
-  </div>
-));
-StatCard.displayName = 'StatCard';
-
+// Delay breakdown component
 const DelayBreakdown = React.memo(({ delays, isDarkMode }) => (
   <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm`}>
     <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
@@ -78,7 +85,47 @@ const DelayBreakdown = React.memo(({ delays, isDarkMode }) => (
 ));
 DelayBreakdown.displayName = 'DelayBreakdown';
 
-const ChartSection = React.memo(({ title, description, data, isDarkMode, config, height = "64" }) => (
+const BarChartComponent = React.memo(({ data, layout, isDarkMode, xAxisKey, yAxisKey }) => {
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <BarChart
+        data={data}
+        layout={layout}
+        margin={{ top: 20, right: 30, left: 30, bottom: 5 }}
+      >
+        <XAxis
+          type={layout === 'vertical' ? 'number' : 'category'}
+          dataKey={layout === 'vertical' ? undefined : xAxisKey}
+          tick={{ fill: isDarkMode ? '#9CA3AF' : '#6B7280' }}
+          tickFormatter={layout === 'vertical' ? (value) => `${value}%` : undefined}
+        />
+        <YAxis
+          type={layout === 'vertical' ? 'category' : 'number'}
+          dataKey={layout === 'vertical' ? yAxisKey : undefined}
+          tick={{ fill: isDarkMode ? '#9CA3AF' : '#6B7280' }}
+          tickFormatter={layout === 'vertical' ? undefined : (value) => `${value}%`}
+        />
+        <Tooltip
+          formatter={(value) => `${value}%`}
+          contentStyle={{
+            backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
+            border: 'none',
+            borderRadius: '0.5rem',
+            color: isDarkMode ? '#FFFFFF' : '#000000',
+          }}
+        />
+        <Legend content={<CustomLegend isDarkMode={isDarkMode} />} />
+        <Bar dataKey="onTime" stackId="a" fill="#10B981" name="On Time" />
+        <Bar dataKey="minor" stackId="a" fill="#F59E0B" name="5-30m" />
+        <Bar dataKey="medium" stackId="a" fill="#F97316" name="31-60m" />
+        <Bar dataKey="major" stackId="a" fill="#EF4444" name=">60m" />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+});
+BarChartComponent.displayName = 'BarChartComponent';
+
+const ChartSection = React.memo(({ title, description, data, layout, isDarkMode, height, xAxisKey, yAxisKey }) => (
   <div className={`p-6 rounded-xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-sm mb-8`}>
     <h2 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
       {title}
@@ -86,41 +133,14 @@ const ChartSection = React.memo(({ title, description, data, isDarkMode, config,
     <p className={`text-sm mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
       {description}
     </p>
-    <div className={`h-${height}`}>
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart
-          data={data}
-          margin={{ top: 5, right: 30, left: 30, bottom: 5 }}
-          layout={config.layout}
-        >
-          <XAxis 
-            type={config.xAxisType}
-            dataKey={config.xDataKey}
-            tick={config.labelStyle}
-            tickFormatter={config.xTickFormatter}
-          />
-          <YAxis 
-            type={config.yAxisType}
-            dataKey={config.yDataKey}
-            tick={config.labelStyle}
-            tickFormatter={config.yTickFormatter}
-          />
-          <Tooltip 
-            contentStyle={config.tooltipStyle}
-            formatter={config.tooltipFormatter}
-          />
-          <Legend content={<CustomLegend isDarkMode={isDarkMode} />} />
-          {config.bars.map((bar, index) => (
-            <Bar 
-              key={index}
-              dataKey={bar.dataKey}
-              stackId={bar.stackId}
-              fill={bar.fill}
-              name={bar.name}
-            />
-          ))}
-        </BarChart>
-      </ResponsiveContainer>
+    <div style={{ height: height }}>
+      <BarChartComponent
+        data={data}
+        layout={layout}
+        isDarkMode={isDarkMode}
+        xAxisKey={xAxisKey}
+        yAxisKey={yAxisKey}
+      />
     </div>
   </div>
 ));
@@ -132,31 +152,6 @@ const Dashboard = () => {
   const [flightData, setFlightData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const chartConfig = {
-    labelStyle: {
-      fontSize: '14px',
-      fill: isDarkMode ? '#9CA3AF' : '#6B7280',
-    },
-    tooltipStyle: {
-      backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
-      border: 'none',
-      borderRadius: '0.5rem',
-      color: isDarkMode ? '#FFFFFF' : '#000000',
-    },
-    colors: {
-      onTime: '#10B981',
-      minor: '#F59E0B',
-      medium: '#F97316',
-      major: '#EF4444',
-    },
-    labels: {
-      onTime: 'On Time',
-      minor: '5-30m',
-      medium: '31-60m',
-      major: '>60m',
-    },
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -295,24 +290,11 @@ const Dashboard = () => {
             title="🕒 Time of Day Trends"
             description="How does the time of day impact your delay?"
             data={timeOfDayData}
+            layout="vertical"
             isDarkMode={isDarkMode}
-            config={{
-              xAxisType: "number",
-              yAxisType: "category",
-              yDataKey: "timeSlot",
-              xTickFormatter: (value) => `${value}%`,
-              tooltipFormatter: (value) => `${value}%`,
-              labelStyle: chartConfig.labelStyle,
-              tooltipStyle: chartConfig.tooltipStyle,
-              layout: "vertical",
-              bars: [
-                { dataKey: "onTime", stackId: "a", fill: chartConfig.colors.onTime, name: chartConfig.labels.onTime },
-                { dataKey: "minor", stackId: "a", fill: chartConfig.colors.minor, name: chartConfig.labels.minor },
-                { dataKey: "medium", stackId: "a", fill: chartConfig.colors.medium, name: chartConfig.labels.medium },
-                { dataKey: "major", stackId: "a", fill: chartConfig.colors.major, name: chartConfig.labels.major }
-              ]
-            }}
-            height="64"
+            height={300}
+            xAxisKey={undefined}
+            yAxisKey="timeSlot"
           />
 
           {/* Schengen Analysis */}
@@ -320,24 +302,11 @@ const Dashboard = () => {
             title="🌍 Schengen vs Non-Schengen"
             description="How do delays compare between Schengen and non-Schengen flights?"
             data={schengenData}
+            layout="vertical"
             isDarkMode={isDarkMode}
-            config={{
-              xAxisType: "number",
-              yAxisType: "category",
-              yDataKey: "zone",
-              xTickFormatter: (value) => `${value}%`,
-              tooltipFormatter: (value) => `${value}%`,
-              labelStyle: chartConfig.labelStyle,
-              tooltipStyle: chartConfig.tooltipStyle,
-              layout: "vertical",
-              bars: [
-                { dataKey: "onTime", stackId: "a", fill: chartConfig.colors.onTime, name: chartConfig.labels.onTime },
-                { dataKey: "minor", stackId: "a", fill: chartConfig.colors.minor, name: chartConfig.labels.minor },
-                { dataKey: "medium", stackId: "a", fill: chartConfig.colors.medium, name: chartConfig.labels.medium },
-                { dataKey: "major", stackId: "a", fill: chartConfig.colors.major, name: chartConfig.labels.major }
-              ]
-            }}
-            height="48"
+            height={200}
+            xAxisKey={undefined}
+            yAxisKey="zone"
           />
 
           {/* HeatMap */}
@@ -348,23 +317,11 @@ const Dashboard = () => {
             title="📊 Weekly Trends"
             description="Are delays getting better or worse over time?"
             data={data.weeklyData}
+            layout="horizontal"
             isDarkMode={isDarkMode}
-            config={{
-              xAxisType: "category",
-              yAxisType: "number",
-              xDataKey: "week",
-              yTickFormatter: (value) => `${value}%`,
-              tooltipFormatter: (value) => `${value}%`,
-              labelStyle: chartConfig.labelStyle,
-              tooltipStyle: chartConfig.tooltipStyle,
-              bars: [
-                { dataKey: "onTime", stackId: "a", fill: chartConfig.colors.onTime, name: chartConfig.labels.onTime },
-                { dataKey: "minor", stackId: "a", fill: chartConfig.colors.minor, name: chartConfig.labels.minor },
-                { dataKey: "medium", stackId: "a", fill: chartConfig.colors.medium, name: chartConfig.labels.medium },
-                { dataKey: "major", stackId: "a", fill: chartConfig.colors.major, name: chartConfig.labels.major }
-              ]
-            }}
-            height="80"
+            height={400}
+            xAxisKey="week"
+            yAxisKey={undefined}
           />
 
           {/* Footer */}
@@ -372,8 +329,7 @@ const Dashboard = () => {
             <p className="text-sm">
               Built by{' '}
               <a 
-                href="https://blog.samrhea.com/"
-                target="_blank"
+                href="https://blog.samrhea.com/" target="_blank"
                 rel="noopener noreferrer"
                 className={`hover:underline ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
               >
