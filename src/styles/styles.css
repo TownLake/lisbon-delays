@@ -1,0 +1,66 @@
+/* styles.css */
+
+:root {
+    /* Color variables */
+    --green: #10B981;
+    --yellow: #F59E0B;
+    --orange: #F97316;
+    --red: #EF4444;
+    --bg-dark: #1F2937;
+    --text-dark: #9CA3AF;
+    --text-light: #6B7280;
+    --bg-light: #FFFFFF;
+  }
+  
+  body.dark {
+    background-color: var(--bg-dark);
+  }
+  
+  body.light {
+    background-color: var(--bg-light);
+  }
+  
+  .text-dark-mode {
+    color: var(--text-dark);
+  }
+  
+  .text-light-mode {
+    color: var(--text-light);
+  }
+  
+  /* Button styling */
+  .toggle-button {
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  /* Flex and grid styles */
+  .centered-flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .heatmap-cell {
+    width: 7rem;
+    height: 6rem;
+    padding: 0.5rem;
+    margin: 0.25rem;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+  }
+  
