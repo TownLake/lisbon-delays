@@ -1,4 +1,7 @@
-// HeatMap.js
+// src/components/HeatMap.js
+
+"use client";
+
 import React, { memo } from 'react';
 import '../styles/styles.css';
 
@@ -55,5 +58,8 @@ const DelayHeatMap = memo(({ data, isDarkMode }) => {
     </div>
   );
 });
+
+// Adding display name to satisfy ESLint requirements
+DelayHeatMap.displayName = 'DelayHeatMap';
 
 export default DelayHeatMap;
