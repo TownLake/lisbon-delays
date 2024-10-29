@@ -1,5 +1,7 @@
 // src/components/Dashboard.js
 
+"use client";
+
 import React, { useState, useEffect, Suspense } from 'react';
 import { Sun, Moon, PlaneLanding, PlaneTakeoff } from 'lucide-react';
 import DelayHeatMap from './HeatMap';
