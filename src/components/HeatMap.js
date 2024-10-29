@@ -16,6 +16,7 @@ const HeatMapCell = React.memo(({ value, getColor, getTextColor }) => (
     </span>
   </div>
 ));
+HeatMapCell.displayName = 'HeatMapCell';
 
 // Memoized LandscapeHeatMap component
 const LandscapeHeatMap = React.memo(({ timeSlots, zones, getCellValue, isDarkMode, getColor, getTextColor }) => (
@@ -61,6 +62,7 @@ const LandscapeHeatMap = React.memo(({ timeSlots, zones, getCellValue, isDarkMod
     </div>
   </div>
 ));
+LandscapeHeatMap.displayName = 'LandscapeHeatMap';
 
 // Memoized PortraitHeatMap component
 const PortraitHeatMap = React.memo(({ timeSlots, zones, getCellValue, isDarkMode, getColor, getTextColor }) => (
@@ -113,6 +115,7 @@ const PortraitHeatMap = React.memo(({ timeSlots, zones, getCellValue, isDarkMode
     </div>
   </div>
 ));
+PortraitHeatMap.displayName = 'PortraitHeatMap';
 
 // Memoized Legend component
 const Legend = React.memo(({ isDarkMode }) => (
@@ -155,6 +158,7 @@ const Legend = React.memo(({ isDarkMode }) => (
     </div>
   </div>
 ));
+Legend.displayName = 'Legend';
 
 const DelayHeatMap = React.memo(({ data, isDarkMode }) => {
   const timeSlots = ['Early', 'Morning', 'Afternoon', 'Evening'];
@@ -206,7 +210,6 @@ const DelayHeatMap = React.memo(({ data, isDarkMode }) => {
     </div>
   );
 });
-
 DelayHeatMap.displayName = 'DelayHeatMap';
 
 export default DelayHeatMap;
