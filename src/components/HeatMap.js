@@ -187,7 +187,7 @@ const DelayHeatMap = React.memo(({ data, isDarkMode }) => {
         🌡️ Delay Heat Map
       </h2>
       <p className={`text-sm mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
-        Average delays by time of day and flight region
+        Average delays by time of day and Schengen status of destination/origin city.
       </p>
       
       <LandscapeHeatMap 
