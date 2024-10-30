@@ -333,8 +333,8 @@ const Dashboard = () => {
                 rel="noopener noreferrer"
                 className={`hover:underline ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
               >
-              </a>
-              Built
+                Built
+              </a>              
               {' '}by{' '}
               <a 
                 href="https://blog.samrhea.com/" target="_blank"
