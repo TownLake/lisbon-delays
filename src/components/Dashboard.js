@@ -288,7 +288,7 @@ const Dashboard = () => {
           {/* Time of Day Analysis */}
           <ChartSection
             title="🕒 Time of Day Trends"
-            description="How does the time of day impact your delay?"
+            description="Delay distribution by time of day. Early <6AM, Morning 6AM-Noon, Afternoon Noon-6PM, Evening >6PM."
             data={timeOfDayData}
             layout="vertical"
             isDarkMode={isDarkMode}
@@ -300,7 +300,7 @@ const Dashboard = () => {
           {/* Schengen Analysis */}
           <ChartSection
             title="🌍 Schengen vs Non-Schengen"
-            description="How do delays compare between Schengen and non-Schengen flights?"
+            description="Delay distribution based on Schengen Zone status of origin/destination."
             data={schengenData}
             layout="vertical"
             isDarkMode={isDarkMode}
@@ -315,7 +315,7 @@ const Dashboard = () => {
           {/* Weekly Trends */}
           <ChartSection
             title="📊 Weekly Trends"
-            description="Are delays getting better or worse over time?"
+            description="Delay distribution by ISO week of 2024."
             data={data.weeklyData}
             layout="horizontal"
             isDarkMode={isDarkMode}
@@ -327,7 +327,15 @@ const Dashboard = () => {
           {/* Footer */}
           <footer className={`text-center py-4 border-t ${isDarkMode ? 'border-gray-800 text-gray-400' : 'border-gray-200 text-gray-600'}`}>
             <p className="text-sm">
-              Built by{' '}
+              <a 
+                href="https://github.com/TownLake/lisbon-delays" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`hover:underline ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}
+              >
+              </a>
+              Built
+              {' '}by{' '}
               <a 
                 href="https://blog.samrhea.com/" target="_blank"
                 rel="noopener noreferrer"
