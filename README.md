@@ -1,68 +1,34 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`c3`](https://developers.cloudflare.com/pages/get-started/c3).
+# LIS-Delays
 
-## Getting Started
+LIS-Delays measures the on-time rates for departures and arrivals at the primary airport in Lisbon, Portugal
 
-First, run the development server:
+## Data Source
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+FlightAware's [AeroAPI](https://www.flightaware.com/aeroapi/portal/) provides real-time and historical flight data. My subscription only permits querying for flight data in the last 10 days.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Data Processing
 
-## Cloudflare integration
+I handle data processing manually on my machine because I want to retain my own archive and I like to run spot checks, both of which I find easier to do with local data. I might convert these steps to a GitHub Action in the future.
 
-Besides the `dev` script mentioned above `c3` has added a few extra scripts that allow you to integrate the application with the [Cloudflare Pages](https://pages.cloudflare.com/) environment, these are:
-  - `pages:build` to build the application for Pages using the [`@cloudflare/next-on-pages`](https://github.com/cloudflare/next-on-pages) CLI
-  - `preview` to locally preview your Pages application using the [Wrangler](https://developers.cloudflare.com/workers/wrangler/) CLI
-  - `deploy` to deploy your Pages application using the [Wrangler](https://developers.cloudflare.com/workers/wrangler/) CLI
+1. `flight_data_processor.py` prompts for a date and then captures the departure and arrival data for that date. The script also checks to see if the origin/destination city is in the Schengen, assigns a time of day based on the scheduled departure or arrival, and extracts only the fields that I care about. Oh, finally it converts the output into two CSVs - one for departures and one for arrivals.
+2. `merge-csv.py` combines multiple files and saves them to a specific folder.
+3. `metrics.py` takes the mered CSV and runs the analysis that generates the `.json` file that is uploaded to Workers KV.
+4. `wrangler.bash` is the Wrangler script that sends the data to KV.
 
-> __Note:__ while the `dev` script is optimal for local development you should preview your Pages application as well (periodically or before deployments) in order to make sure that it can properly work in the Pages environment (for more details see the [`@cloudflare/next-on-pages` recommended workflow](https://github.com/cloudflare/next-on-pages/blob/main/internal-packages/next-dev/README.md#recommended-development-workflow))
+Handful of important notes about data integrity and handling:
+* About a dozen or so arrival flights per day lack `actual_in` values. I am not sure why (and it is not because these are overnight flights etc). I just ignore these for now.
+* I implement some rounding to get the whole number percentages to add up to 100.
 
-### Bindings
+## Application
 
-Cloudflare [Bindings](https://developers.cloudflare.com/pages/functions/bindings/) are what allows you to interact with resources available in the Cloudflare Platform.
+* The application itself is a Next.js React application [running on Cloudflare Pages](https://developers.cloudflare.com/pages/framework-guides/nextjs/ssr/get-started/).
 
-You can use bindings during development, when previewing locally your application and of course in the deployed application:
+## Feedback
 
-- To use bindings in dev mode you need to define them in the `next.config.js` file under `setupDevBindings`, this mode uses the `next-dev` `@cloudflare/next-on-pages` submodule. For more details see its [documentation](https://github.com/cloudflare/next-on-pages/blob/05b6256/internal-packages/next-dev/README.md).
+* Got ideas? Found a bug? Please open an issue!
 
-- To use bindings in the preview mode you need to add them to the `pages:preview` script accordingly to the `wrangler pages dev` command. For more details see its [documentation](https://developers.cloudflare.com/workers/wrangler/commands/#dev-1) or the [Pages Bindings documentation](https://developers.cloudflare.com/pages/functions/bindings/).
+## Author
 
-- To use bindings in the deployed application you will need to configure them in the Cloudflare [dashboard](https://dash.cloudflare.com/). For more details see the  [Pages Bindings documentation](https://developers.cloudflare.com/pages/functions/bindings/).
+My name is Sam Rhea and you can read more about me [here](https://blog.samrhea.com/). I built this because I love Lisbon and want other people to love it as well. That starts with being able to visit. I recognize that air travel is seriously complex and
 
-#### KV Example
-
-`c3` has added for you an example showing how you can use a KV binding.
-
-In order to enable the example:
-- Search for javascript/typescript lines containing the following comment:
-  ```ts
-  // KV Example:
-  ```
-  and uncomment the commented lines below it.
-- Do the same in the `wrangler.toml` file, where
-  the comment is:
-  ```
-  # KV Example:
-  ```
-- If you're using TypeScript run the `cf-typegen` script to update the `env.d.ts` file:
-  ```bash
-  npm run cf-typegen
-  # or
-  yarn cf-typegen
-  # or
-  pnpm cf-typegen
-  # or
-  bun cf-typegen
-  ```
-
-After doing this you can run the `dev` or `preview` script and visit the `/api/hello` route to see the example in action.
-
-Finally, if you also want to see the example work in the deployed application make sure to add a `MY_KV_NAMESPACE` binding to your Pages application in its [dashboard kv bindings settings section](https://dash.cloudflare.com/?to=/:account/pages/view/:pages-project/settings/functions#kv_namespace_bindings_section). After having configured it make sure to re-deploy your application.
+I also think it's just fun to build things on Cloudflare Workers.
